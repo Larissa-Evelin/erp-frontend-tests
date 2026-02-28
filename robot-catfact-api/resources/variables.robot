@@ -1,2 +1,0 @@
-*** Variables ***
-${BASE_URL}     https://catfact.ninja

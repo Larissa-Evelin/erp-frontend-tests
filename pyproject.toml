@@ -1,0 +1,6 @@
+[tool.robocop]
+exclude = ["VAR05", "VAR02"]
+reports = ["return_status"]
+
+[tool.robocop.configuring_rules]
+"VAR05.severity" = "I"
