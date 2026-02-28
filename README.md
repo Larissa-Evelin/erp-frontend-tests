@@ -18,65 +18,69 @@ Para garantir um projeto limpo e fácil de manter, separei as responsabilidades 
 
 ---
 
+## Qualidade de Código & CI/CD
+
+### Análise Estática com Robocop
+Para garantir que o código siga as melhores práticas do Robot Framework, utilizei o **Robocop**. Ele analisa o código em busca de melhorias de sintaxe e padrões de projeto.
+
+### Pipeline de CI (GitHub Actions)
+Configurei uma pipeline de **Integração Contínua** que automatiza a qualidade do projeto. Toda vez que um novo código é enviado para o repositório (`git push`), o GitHub Actions executa os seguintes passos:
+
+1.  **Prepara o ambiente Python:** Configura a versão correta do interpretador.
+2.  **Instala dependências:** Garante que todas as bibliotecas (Robot Framework, Requests, Robocop) estejam presentes.
+3.  **Executa a análise estática:** Roda o Robocop para validar a qualidade do código.
+4.  **Controle de Build:** Garante que o build só seja aprovado se o código estiver de acordo com os padrões de severidade definidos.
+
+---
+
 ## Como preparar o ambiente e rodar os testes
 
-### 1. Instalação do Python
-Certifique-se de ter o **Python 3.10+** instalado. No terminal, verifique com o comando: `python3 --version`.
+Para garantir que tudo funcione corretamente, siga estes passos para configurar seu ambiente:
 
-* **Linux (Ubuntu/Debian):** ```bash
-sudo apt update && sudo apt install python3 python3-pip python3-venv
+* **1. Instalação do Python**: Certifique-se de ter o **Python 3.10+** instalado. Verifique no terminal com `python3 --version`.
+    * **Linux (Ubuntu/Debian)**:
+      ```bash
+      sudo apt update && sudo apt install python3 python3-pip python3-venv
+      ```
+    * **Windows**: Baixe em [python.org](https://www.python.org/downloads/). *Atenção: Marque a opção "Add Python to PATH" na instalação.*
 
-Windows: Baixe em [python.org](https://www.python.org/downloads/).
+* **2. Configurando o Ambiente Virtual**: Dentro da pasta raiz do projeto, execute os comandos para isolar as dependências:
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate  # No Windows use: venv\Scripts\activate
+    ```
 
-Atenção: Durante a instalação, marque a opção "Add Python to PATH".
+* **3. Instalando o Robot Framework**: Com o ambiente ativo (venv), instale as bibliotecas necessárias para a automação:
+    ```bash
+    pip install robotframework robotframework-requests robotframework-robocop
+    ```
 
-2. Configurando o Ambiente Virtual
-Dentro da pasta raiz do projeto, execute:
+* **4. Executando os Testes**: Utilize o script de automação ou o comando direto do Robot:
+    * **Linux / macOS**: `chmod +x run_tests.sh && ./run_tests.sh`
+    * **Windows**: `run_tests.bat`
+    * **Manual**: `robot --outputdir reports/ robot-catfact-api/tests/breeds_tests.robot`
 
-python3 -m venv venv
-source venv/bin/activate  # No Windows use: venv\Scripts\activate
+* **5. Onde encontrar os resultados?**: Após a execução, os relatórios estarão consolidados na pasta `reports/`:
+    * **`log.html`**: Detalhamento técnico com o passo a passo de cada validação.
+    * **`report.html`**: Visão executiva com as estatísticas de sucesso dos testes.
 
-3. Instalando o Robot Framework
-Com o ambiente ativo (venv), instale as bibliotecas necessárias:
-
-Bash
-pip install robotframework robotframework-requests
-
-4. Executando os Testes e Analisando Resultados
-
-No Linux / macOS
-Bash
-chmod +x run_tests.sh
-./run_tests.sh
-No Windows (Prompt de Comando ou PowerShell)
-Snippet de código
-run_tests.bat
-Nota: Se preferir rodar manualmente ou em outros terminais, utilize o comando padrão:
-robot --outputdir reports/ robot-catfact-api/tests/breeds_tests.robot
-
-Onde encontrar os resultados?
-Após a execução, os relatórios estarão consolidados na pasta reports/:
-
-log.html: Detalhamento técnico com o passo a passo de cada requisição e validação.
-
-report.html: Visão executiva e estatística do sucesso da execução dos testes.
-
-output.xml: Dados brutos da execução (utilizados para integração com ferramentas de CI/CD).
+---
 
 ## Resolução de Problemas & Visão de Qualidade
 
-### 1. (Exercício 3)
-Se um bug afeta o cliente em produção, minha postura é de **resolutividade**:
+Abaixo, detalho minha abordagem técnica e estratégica para garantir a confiabilidade do software:
 
-* **Reporte e Logs (A):** Eu abriria um report técnico detalhado com o passo a passo para reprodução e os *payloads* envolvidos. Usaria o **Correlation ID** nos logs do servidor (como CloudWatch ou ELK) para entregar o diagnóstico exato ao desenvolvedor, economizando tempo precioso de depuração.
-* **Mitigação e Prevenção (B):** 1.  O bug identificado viraria, obrigatoriamente, um novo **teste de regressão** automatizado na nossa suíte.
-    2.  Avaliaria a **priorização** junto ao PO (Product Owner), baseando a urgência no impacto real causado ao cliente.
-    3.  Sugeriria a implementação de **dashboards e alertas** (via Grafana ou ferramenta similar) para monitorar erros 5xx, permitindo que o time aja de forma proativa antes mesmo do cliente reclamar.
+* **1. Resposta a Incidentes (Exercício 3)**: Se um bug afeta o cliente em produção, minha postura é de **resolutividade**:
+    * **Reporte e Logs (a)**: Eu abriria um report técnico detalhado com o passo a passo para reprodução e os *payloads* envolvidos.
+    * **Mitigação e Prevenção (b)**: Para evitar que este erro ou falhas similares cheguem ao cliente, minha estratégia foca em:
+        * **Automação e Regressão**: O bug identificado é transformado em um novo caso de teste automatizado. Isso garante que, em qualquer alteração futura na feature, o erro seja detectado imediatamente no pipeline de CI.
+        * **Priorização e Impacto**: A correção é priorizada junto ao PO (Product Owner) analisando o volume de usuários afetados e a criticidade da função (ex: se impede o fluxo principal de venda/consulta, é prioridade máxima).
+        * **Monitoramento e Observabilidade**: Implementação de **Dashboards (Grafana)** para acompanhar a taxa de erro e configuração de **Alertas (Slack/E-mail)**. Assim, o time de QA e Engenharia age de forma proativa antes mesmo do cliente abrir um chamado.
 
-### 2. Escalabilidade (Item 4c)
-Para lidar com centenas de variações de dados de forma eficiente, utilizaria a técnica de **Test Templates (Data-Driven Testing)** no Robot Framework. Isso permite manter a estrutura do código limpa e o projeto escalável, reaproveitando a mesma lógica para diferentes massas de dados.
+* **2. Escalabilidade (Item 4c)**: Para lidar com centenas de variações de dados de forma eficiente:
+    * **Data-Driven Testing**: Utilizaria a técnica de **Test Templates** no Robot Framework. Isso permite manter a estrutura do código limpa e o projeto escalável, reaproveitando a mesma lógica para diferentes massas de dados.
 
-### 3. Análise de Resultados (Item 5a)
-Analiso o sucesso da entrega através do binômio fornecido pelo framework:
-* **Report.html:** Oferece a visão de negócio (o "termômetro" da saúde da entrega).
-* **Log.html:** É onde realizo o diagnóstico técnico, utilizando a rastreabilidade de cada requisição para validar se o comportamento do sistema está de acordo com o esperado.
+* **3. Análise de Resultados (Item 5a)**: Analiso o sucesso da entrega através do conjunto de artefatos gerados pelo framework:
+    * **`report.html`**: Fornece a visão consolidada da execução, apresentando as estatísticas de sucesso e falhas que validam a estabilidade da entrega.
+    * **`log.html`**: Onde realizo o diagnóstico técnico e a rastreabilidade detalhada de cada keyword e requisição.
+    * **`output.xml`**: Arquivo de dados brutos que possibilita a integração com ferramentas de CI/CD para geração de dashboards históricos e análise automatizada de falhas.
