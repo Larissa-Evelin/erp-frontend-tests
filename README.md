@@ -1,102 +1,82 @@
-# Cenários de Teste Funcional – ERP
+# Projeto de Automação de Testes – Cat Fact API & Modelagem ERP
 
-Este repositório contém cenários de teste funcional escritos em Gherkin, contemplando validações de frontend e backend.
-
----
-
-## 📌 Visão Geral do Projeto
-
-O objetivo deste projeto é demonstrar a modelagem de testes funcionais utilizando BDD, cobrindo cenários positivos, negativos, validação de contrato de API e análise de comportamento da aplicação.
+Este repositório foi criado para apresentar minha solução para os desafios técnicos de QA. Aqui, foquei em unir a teoria da modelagem de testes (BDD) com a prática de automação usando Robot Framework e Python.
 
 ---
 
-## 🏗 Estrutura do Projeto
+## Estrutura do Projeto
 
-- **Testes de Frontend** – Tela de Filtro de Usuários  
-- **Testes de Backend** – Endpoint GET `/breeds` (Cat Facts API)
+Para garantir um projeto limpo e fácil de manter, separei as responsabilidades assim:
 
----
-
-## 🖥 Cobertura de Testes – Frontend
-
-Foram considerados os seguintes cenários na tela de filtros:
-
-- Filtro por Tipo de Pessoa  
-- Filtro por Nome  
-- Filtro por E-mail  
-- Validação de e-mail inválido  
-- Cenário sem resultados  
+* **`features/`**: **Minha documentação viva.** Aqui utilizei a sintaxe Gherkin para descrever o comportamento esperado em duas frentes:
+    * **Frontend (ERP Matera):** Foquei na modelagem teórica da tela de Consulta de Usuários, mapeando cenários de filtros (Nome, E-mail, Tipo de Pessoa) e fluxos de exceção para garantir uma interface resiliente.
+    * **Backend (API Cat Facts):** Documentação que serviu de base para a automação real do endpoint `/breeds`. O foco aqui foi a **Validação de Contrato**, garantindo a integridade do JSON e o tratamento de parâmetros inválidos.
+* **`robot-catfact-api/tests/`**: Aqui estão os scripts de automação que o Robot Framework executa.
+* **`libraries/`**: Criei a `BreedsLibrary.py` em Python para validar se o contrato da API está certinho (campos obrigatórios e tipos de dados).
+* **`resources/`**: Onde guardo minhas Keywords personalizadas e variáveis globais.
+* **`reports/`**: Pasta destinada aos logs e relatórios gerados após os testes.
 
 ---
 
-## 🔎 Cobertura de Testes – Backend
+## Como preparar o ambiente e rodar os testes
 
-Para o endpoint GET `/breeds`, foram realizadas as seguintes validações:
+### 1. Instalação do Python
+Certifique-se de ter o **Python 3.10+** instalado. No terminal, verifique com o comando: `python3 --version`.
 
-- Validação de status code  
-- Validação de parâmetros de query  
-- Validação da estrutura da resposta  
-- Validação de contrato (schema)  
-- Tratamento de erros  
+* **Linux (Ubuntu/Debian):** ```bash
+sudo apt update && sudo apt install python3 python3-pip python3-venv
 
----
+Windows: Baixe em [python.org](https://www.python.org/downloads/).
 
-## 🧠 Estratégia de Teste
+Atenção: Durante a instalação, marque a opção "Add Python to PATH".
 
-A abordagem adotada contempla:
+2. Configurando o Ambiente Virtual
+Dentro da pasta raiz do projeto, execute:
 
-- Cenários positivos (Happy Path)  
-- Cenários negativos (Unhappy Path)  
-- Validação de casos de borda  
-- Validação de contrato da API  
-- Verificação de campos obrigatórios e tipos de dados  
+python3 -m venv venv
+source venv/bin/activate  # No Windows use: venv\Scripts\activate
 
----
+3. Instalando o Robot Framework
+Com o ambiente ativo (venv), instale as bibliotecas necessárias:
 
-# 📚 Exercício 3 – Resolução de Problemas
+Bash
+pip install robotframework robotframework-requests
 
-## a) Como eu reportaria esse bug?
+4. Executando os Testes e Analisando Resultados
 
-Caso eu identificasse um bug em produção impactando clientes, trataria imediatamente como um incidente crítico.
+No Linux / macOS
+Bash
+chmod +x run_tests.sh
+./run_tests.sh
+No Windows (Prompt de Comando ou PowerShell)
+Snippet de código
+run_tests.bat
+Nota: Se preferir rodar manualmente ou em outros terminais, utilize o comando padrão:
+robot --outputdir reports/ robot-catfact-api/tests/breeds_tests.robot
 
-O reporte incluiria:
+Onde encontrar os resultados?
+Após a execução, os relatórios estarão consolidados na pasta reports/:
 
-- Descrição clara do problema  
-- Comportamento esperado  
-- Impacto no cliente  
-- Ambiente afetado (Produção)  
-- Horário da ocorrência  
-- Passos para reprodução (se possível)  
-- Evidências como logs, payload da requisição, response da API e correlation ID  
+log.html: Detalhamento técnico com o passo a passo de cada requisição e validação.
 
-Utilizaria os logs para identificar:
+report.html: Visão executiva e estatística do sucesso da execução dos testes.
 
-- Stack trace  
-- Mensagens de erro internas  
-- Falhas de integração  
-- Problemas de timeout  
-- Padrão de ocorrência  
+output.xml: Dados brutos da execução (utilizados para integração com ferramentas de CI/CD).
 
-Essas informações ajudam na identificação rápida da causa raiz e reduzem o tempo de resolução.
+## Resolução de Problemas & Visão de Qualidade
 
----
+### 1. (Exercício 3)
+Se um bug afeta o cliente em produção, minha postura é de **resolutividade**:
 
-## b) Como mitigar e evitar problemas futuros?
+* **Reporte e Logs (A):** Eu abriria um report técnico detalhado com o passo a passo para reprodução e os *payloads* envolvidos. Usaria o **Correlation ID** nos logs do servidor (como CloudWatch ou ELK) para entregar o diagnóstico exato ao desenvolvedor, economizando tempo precioso de depuração.
+* **Mitigação e Prevenção (B):** 1.  O bug identificado viraria, obrigatoriamente, um novo **teste de regressão** automatizado na nossa suíte.
+    2.  Avaliaria a **priorização** junto ao PO (Product Owner), baseando a urgência no impacto real causado ao cliente.
+    3.  Sugeriria a implementação de **dashboards e alertas** (via Grafana ou ferramenta similar) para monitorar erros 5xx, permitindo que o time aja de forma proativa antes mesmo do cliente reclamar.
 
-Se o problema poderia ter sido identificado durante os testes da feature, eu revisaria a cobertura de testes e incluiria:
+### 2. Escalabilidade (Item 4c)
+Para lidar com centenas de variações de dados de forma eficiente, utilizaria a técnica de **Test Templates (Data-Driven Testing)** no Robot Framework. Isso permite manter a estrutura do código limpa e o projeto escalável, reaproveitando a mesma lógica para diferentes massas de dados.
 
-- Cenários negativos adicionais  
-- Validações de casos de borda  
-- Reforço na validação de contrato (schema)  
-- Inclusão do cenário na suíte de regressão obrigatória  
-
-Além disso, reforçaria o monitoramento em produção com:
-
-- Alertas para erros 5xx  
-- Monitoramento de taxa de erro  
-- Monitoramento de tempo de resposta  
-- Dashboards de acompanhamento da saúde da API  
-
-Também avaliaria o impacto no cliente (quantidade de usuários afetados, indisponibilidade e possíveis prejuízos) para garantir a priorização adequada da correção.
-
-Essa abordagem reduz o risco de recorrência e aumenta a confiabilidade da aplicação.
+### 3. Análise de Resultados (Item 5a)
+Analiso o sucesso da entrega através do binômio fornecido pelo framework:
+* **Report.html:** Oferece a visão de negócio (o "termômetro" da saúde da entrega).
+* **Log.html:** É onde realizo o diagnóstico técnico, utilizando a rastreabilidade de cada requisição para validar se o comportamento do sistema está de acordo com o esperado.

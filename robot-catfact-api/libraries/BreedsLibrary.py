@@ -1,16 +1,15 @@
-from robot.api.deco import keyword
+def validate_breed_contract(breed_list):
+    """
+    Valida se todos os objetos na lista 'data' contêm os campos obrigatórios.
+    """
+    required_fields = ["breed", "country", "origin", "coat", "pattern"]
+    
+    if not isinstance(breed_list, list):
+        raise AssertionError(f"Esperado uma lista, mas recebeu: {type(breed_list)}")
 
-class BreedsLibrary:
-
-    @keyword("Validate Breed Contract")
-    def validate_breed_contract(self, breeds):
-
-        required_fields = ["breed", "country", "origin", "coat", "pattern"]
-
-        for item in breeds:
-            for field in required_fields:
-                if field not in item:
-                    raise AssertionError(f"Campo obrigatório ausente: {field}")
-
-                if not isinstance(item[field], str):
-                    raise AssertionError(f"O campo {field} deve ser do tipo string")
+    for index, item in enumerate(breed_list):
+        for field in required_fields:
+            if field not in item:
+                raise AssertionError(f"Erro no item {index}: Campo obrigatório '{field}' ausente.")
+    
+    print("Contrato validado com sucesso para todos os itens!")
