@@ -43,7 +43,10 @@ jobs:
 
       # Passo 6: Upload dos relatórios como artifact
       - name: Upload Robot Framework Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: robot-reports
-          path: reports/
+          path: |
+            reports/output.xml
+            reports/log.html
+            reports/report.html
