@@ -61,8 +61,9 @@ Para garantir que tudo funcione corretamente, siga estes passos para configurar 
     * **Manual**: `robot --outputdir reports/ robot-catfact-api/tests/breeds_tests.robot`
 
 * **5. Onde encontrar os resultados?**: Após a execução, os relatórios estarão consolidados na pasta `reports/`:
-    * **`log.html`**: Detalhamento técnico com o passo a passo de cada validação.
-    * **`report.html`**: Visão executiva com as estatísticas de sucesso dos testes.
+    * **`log.html`**: Detalhamento técnico com o passo a passo de cada keyword e validação.
+    * **`report.html`**: Fornece a visão consolidada da execução, apresentando as estatísticas de sucesso e falhas que validam a estabilidade da entrega.
+    * **`output.xml`**: Arquivo de dados brutos que possibilita a integração com ferramentas de CI/CD para análise automatizada e geração de dashboards.
 
 ---
 
