@@ -54,4 +54,4 @@ jobs:
       # Passo 7: Análise Estática com Robocop
       - name: Run Robocop Linter
         run: |
-          robocop check --fail E .
+          robocop check --fail-on E .
