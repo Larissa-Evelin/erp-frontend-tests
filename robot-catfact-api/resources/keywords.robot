@@ -5,19 +5,25 @@ Library    ../libraries/BreedsLibrary.py
 
 *** Keywords ***
 Create API Session
+    [Documentation]    Creates the base session for the API
     Create Session    catapi    ${BASE_URL}    disable_warnings=1
 
-Que envio GET para "${endpoint}"
+a GET request is sent to "${endpoint}"
+    [Documentation]    Sends a GET request and stores the response
     ${response}=    GET On Session    catapi    ${endpoint}    expected_status=any
     Set Suite Variable    ${response}
 
-O status code deve ser ${status}
+the response status code should be ${status}
+    [Documentation]    Validates the HTTP status code
     Should Be Equal As Integers    ${response.status_code}    ${status}
 
-O campo "${campo}" deve existir
-    Dictionary Should Contain Key    ${response.json()}    ${campo}
-
-Validar contrato das raças
+the response body should contain a "${field}" array
+    [Documentation]    Checks if the main field (like 'data') exists
     ${json}=    Set Variable    ${response.json()}
-    # Chamada da nossa biblioteca Python customizada
+    Dictionary Should Contain Key    ${json}    ${field}
+
+validate breed structure
+    [Documentation]    Calls the Python library to validate the JSON contract
+    ${json}=    Set Variable    ${response.json()}
+    # Chamada da função Python passando a lista 'data' como argumento
     Validate Breed Contract    ${json["data"]}

@@ -8,7 +8,7 @@ Este repositório foi criado para apresentar minha solução para os desafios t�
 
 Para garantir um projeto limpo e fácil de manter, separei as responsabilidades assim:
 
-* **`features/`**: **Minha documentação viva.** Aqui utilizei a sintaxe Gherkin para descrever o comportamento esperado em duas frentes:
+* **`features/`**: Aqui utilizei a sintaxe Gherkin para descrever o comportamento esperado em duas frentes:
     * **Frontend (ERP Matera):** Foquei na modelagem teórica da tela de Consulta de Usuários, mapeando cenários de filtros (Nome, E-mail, Tipo de Pessoa) e fluxos de exceção para garantir uma interface resiliente.
     * **Backend (API Cat Facts):** Documentação que serviu de base para a automação real do endpoint `/breeds`. O foco aqui foi a **Validação de Contrato**, garantindo a integridade do JSON e o tratamento de parâmetros inválidos.
 * **`robot-catfact-api/tests/`**: Aqui estão os scripts de automação que o Robot Framework executa.

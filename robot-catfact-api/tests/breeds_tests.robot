@@ -1,26 +1,24 @@
 *** Settings ***
-Documentation     Testes do endpoint GET /breeds da Cat Facts API.
+Documentation     Tests for the GET /breeds endpoint of the Cat Facts API.
 Resource          ../resources/keywords.robot
 Resource          ../resources/variables.robot
 
 Suite Setup       Create API Session
 
 *** Test Cases ***
-Caminho Feliz - Retornar lista de raças
+Happy Path - Retrieve cat breeds list
     [Tags]    smoke
-    Given que envio GET para "/breeds"
-    Then o status code deve ser 200
-    And o campo "data" deve existir
-    And validar contrato das raças
+    When a GET request is sent to "/breeds"
+    Then the response status code should be 200
+    And the response body should contain a "data" array
+    And validate breed structure
 
-Caminho Infeliz - Limit inválido
-    [Documentation]    Verifica comportamento com texto no lugar de número.
-    # Nota: A API catfact.ninja retorna 200 e ignora params inválidos.
-    When que envio GET para "/breeds?limit=abc"
-    Then o status code deve ser 200
+Unhappy Path - Invalid limit parameter
+    [Documentation]    Verifies behavior when a string is passed to the limit parameter.
+    When a GET request is sent to "/breeds?limit=abc"
+    Then the response status code should be 200
 
-Caminho Infeliz - Limit negativo
-    [Documentation]    Verifica comportamento com limite negativo.
-    # Nota: A API retorna 404 para este cenário específico.
-    When que envio GET para "/breeds?limit=-1"
-    Then o status code deve ser 404
+Unhappy Path - Negative limit parameter
+    [Documentation]    Verifies behavior with a negative limit.
+    When a GET request is sent to "/breeds?limit=-1"
+    Then the response status code should be 404

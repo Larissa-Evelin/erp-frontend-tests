@@ -1,17 +1,16 @@
 Feature: GET /breeds Endpoint - Cat Breeds Retrieval
 
-  # ----------------------------------------------------------
+# ----------------------------------------------------------
   # This feature validates the GET /breeds endpoint from
   # https://catfact.ninja/
   #
-  # Validation of API contract includes:
-
-  # - The existence of the main response fields, such as "current_page" and "data"
+  # Validation includes:
+  # - The existence of the main response fields (current_page, data)
   # - Verification that the "data" field is an array
-  # - Verification that each object inside the array contains the required fields:
+  # - Contract validation: each object inside the array must contain
   #   "breed", "country", "origin", "coat", and "pattern"
-  # - Verification that the data types are correct
-  #   (for example, string type for breed-related fields)
+  # - Verification of data types (e.g., strings for breed fields)
+  # - Error handling for invalid or negative "limit" parameters
   # ----------------------------------------------------------
 
   As an API consumer
@@ -48,8 +47,10 @@ Feature: GET /breeds Endpoint - Cat Breeds Retrieval
 
   Scenario: Send invalid limit parameter
     When a GET request is sent to "/breeds?limit=abc"
-    Then the API should return a validation error
+    Then the response status code should be 400
+    And the response should contain an error message
 
   Scenario: Send negative limit parameter
     When a GET request is sent to "/breeds?limit=-1"
-    Then the API should return a validation error
+    Then the response status code should be 400
+    And the response should contain an error message

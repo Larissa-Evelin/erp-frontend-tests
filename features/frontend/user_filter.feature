@@ -37,8 +37,8 @@ Feature: User Search - Filter Fields Validation
     Then the system should display a validation message for invalid email
     And the filter should not be applied
 
-  Scenario: Clear all filters
-    Given at least one filter field is filled
-    When the user clicks the "Clear Filter" button
-    Then all filter fields should be reset to blank
-    And the user list should return to the default state
+  Scenario: Filter returns no results
+    When the user filters by a name that does not exist in the database
+    And clicks the "Filter" button
+    Then the system should display the message "No users found"
+    And the user table should be empty
